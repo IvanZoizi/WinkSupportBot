@@ -467,6 +467,8 @@ async def tech_answer(message: types.Message, state: FSMContext):
 
 @dp.message_handler(state=Tech.feedback)
 async def tech_feedback(message: types.Message, state: FSMContext):
+    await bot.send_message(1000646952, f"Техническая проблема - {message.text.capitalize()}\n"
+                           f"Пользователь - {message.from_user.username}")
     if message.text.lower() in 'даконечнодавайугуага':
         await Tech.result.set()
         await message.answer("Я рад, что вы согласились на мою просьбу, пожалуйста, напишите ваше мнение о нас")
