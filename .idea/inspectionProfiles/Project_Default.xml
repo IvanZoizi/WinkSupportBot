@@ -1,0 +1,17 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="PyUnresolvedReferencesInspection" enabled="true" level="WARNING" enabled_by_default="true">
+      <option name="ignoredIdentifiers">
+        <list>
+          <option value="asgi" />
+          <option value="seo.seo.utils.main" />
+          <option value="seo.main.views.urils" />
+          <option value="seo.seo.urls.main" />
+          <option value="seo.main.views.utils" />
+          <option value="seo.main.views.DataMixin" />
+        </list>
+      </option>
+    </inspection_tool>
+  </profile>
+</component>
