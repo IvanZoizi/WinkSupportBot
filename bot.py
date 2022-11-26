@@ -256,6 +256,7 @@ async def callbacks_nas_finish(call: types.CallbackQuery, callback_data: dict):
     keyboard = types.InlineKeyboardMarkup()
     keyboard.add(types.InlineKeyboardButton(text='Назад', callback_data='end'))
     keyboard.add(types.InlineKeyboardButton(text='Написать в тех. поддержку', callback_data='tech'))
+    print(names)
     await call.message.edit_text(
         f"{dic[names[int(callback_data['action'].split('_')[-1])]]}. \nЕсли хотите узнать подробнее,"
         f" пройдите по ссылке https://wink.ru/faq?selected=7",
@@ -496,11 +497,11 @@ async def tech_result(message: types.Message, state: FSMContext):
     await state.finish()
 
 
-@dp.message_handler(content_types=[types.ContentTypes.VOICE, 'text'])
+@dp.message_handler(content_types=[types.ContentType.VOICE, 'text'])
 async def get_audio(message: types.Message, state: FSMContext):
     try:
         data = await state.get_data()
-        if message.content_type == types.ContentTypes.VOICE:
+        if message.content_type == types.ContentType.VOICE:
             file_id = message.voice.file_id
             file = await bot.get_file(file_id)
             file_path = file.file_path
@@ -522,18 +523,26 @@ async def get_audio(message: types.Message, state: FSMContext):
                             'поддержи',
                             'позвать оператора'] or any([i in text.lower() for i in
                                                          ['помогите', 'мне нужна помощь', 'у меня проблема', 'помоги',
-                                                          'срочно ответь', 'спаси', 'поддержи',
+                                                          'срочно ответь', 'поддержи',
                                                           'позвать оператора']]):
             keyboard = get_keyword('problems.txt')
             await message.answer(
                 f'Уточните вашу проблему. \n Полную информацию вы можете узнать https://wink.ru/faq?selected=0',
                 reply_markup=keyboard)
+            await state.update_data(action=0, error=0)
         elif text.lower() in ['привет', 'салам', 'здравствуйте', 'здрасте', 'здраствуй', 'здравсвуй'] or \
                 any([i in text.lower() for i in
                      ['привет', 'салам', 'здравствуйте', 'здрасте', 'здраствуй', 'здравствуй']]):
             await message.answer(
                 choice(["Здравствуйте", f'Привет, {message.from_user.first_name}', 'Приветик',
                         'Ой, привет', 'Давно не виделись']))
+            await state.update_data(action=0, error=0)
+        elif text.lower() in ['спасибо'] or \
+                any([i in text.lower() for i in
+                     ['спасибо']]):
+            await message.answer(
+                choice(["Рад помочь!", 'Всегда пожалуйста!', 'Не за что!', 'Всегда обращайтесь!']))
+            await state.update_data(action=0, error=0)
         elif text.lower() in ['как дела', 'как ты', 'что нового', 'как настроение'] or \
                 any([i in text.lower() for i in
                      ['как дела', 'как ты', 'что нового', 'как настроение']]):
@@ -561,6 +570,19 @@ async def get_audio(message: types.Message, state: FSMContext):
                                          ' и вам сразу станет лучше', 'Надеюсь, оно изменится',
                                          'Я с вами, мы справимся с вашим плохим настроением']))
             await state.update_data(action=0, error=0)
+        elif text.lower() in ['что делаешь', 'делаешь'] or \
+                 any([i in text.lower() for i in
+                      ['что делаешь', 'делаешь']]):
+            movies = ['1 + 1 == https://wink.ru/media_items/76303979', 'Волна == https://wink.ru/media_items/55097624',
+                      'Звездные войны: Скайуокер. Восход 2019 == https://wink.ru/media_items/95181208',
+                      'Зеленая книга == https://wink.ru/media_items/75532283',
+                      'Гарри Поттер и Дары Смерти: Часть 2 == https://wink.ru/media_items/55005002',
+                      'Бамблби 2018 == https://wink.ru/media_items/76504594']
+            movie, url = choice(movies).split(' == ')
+            await message.answer(choice(['Я общаюсь с самым лучшим человеком в этом мире',
+                                         f'Пересматриваю {movie}. Если хотите посмотреть со мной, то перейдите по ссылке {url}',
+                                         'Пока что я отдыхаю', 'На данный момент я ничего не делаю']))
+            await state.update_data(action=0, error=0)
         elif text.lower() in ['да', 'нет'] and data['action'] == 2:
             await state.update_data(action=0, error=0)
             keyboard = get_keyword('problems.txt')
@@ -572,8 +594,8 @@ async def get_audio(message: types.Message, state: FSMContext):
             movies = ['1 + 1 == https://wink.ru/media_items/76303979', 'Волна == https://wink.ru/media_items/55097624',
                       'Звездные войны: Скайуокер. Восход 2019 == https://wink.ru/media_items/95181208',
                       'Зеленая книга == https://wink.ru/media_items/75532283',
-                      'Гарри Поттер и Дары Смерти: Часть 2== https://wink.ru/media_items/55005002',
-                      'Бамблби 2018== https://wink.ru/media_items/76504594']
+                      'Гарри Поттер и Дары Смерти: Часть 2 == https://wink.ru/media_items/55005002',
+                      'Бамблби 2018 == https://wink.ru/media_items/76504594']
             movie, url = choice(movies).split(' == ')
             await message.answer(choice([f"Недавно сново пересматривал {movie}", f"Советую посмотреть {movie}",
                                          f"Посмотрите {movie}", f"{movie} - фильм, который должен увидеть каждый"]) + f'Можете посмотреть его по ссылке {url}')

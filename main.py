@@ -1,7 +1,7 @@
 from bs4 import BeautifulSoup
 import requests
 
-url = 'https://wink.ru/faq?selected=14'
+url = 'https://wink.ru/faq?selected=7'
 page = requests.get(url)
 soup = BeautifulSoup(page.text, "html.parser")
 problems = soup.findAll('span', class_='root_subtitle3_reg964v')
@@ -16,8 +16,8 @@ for problem in problems:
 print(names)
 
 url = 'https://wink.ru/faq/'
-res = [131, 133, 134, 135, 136, 137, 138, 139, 141]
-with open('wink+.txt', 'w', encoding='utf-8') as file:
+res = [60, 61, 62, 63, 130, 64, 126, 152]
+with open('nas.txt', 'w', encoding='utf-8') as file:
     for i in range(len(names)):
         page = requests.get(url + str(res[i]))
         soup = BeautifulSoup(page.text, "html.parser")
